@@ -15,7 +15,7 @@ namespace SinavTakvimiOlusturmaSistemi
         private int bolumKodu;
         private string bolumAdi;
         private bool isAdmin;
-        public BolumKoordinatoru(int bolumKodu, bool isAdmin)
+        public BolumKoordinatoru(int adminRol)
         {
 
             InitializeComponent();

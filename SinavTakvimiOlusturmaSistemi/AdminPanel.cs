@@ -70,34 +70,34 @@ namespace SinavTakvimiOlusturmaSistemi
 
         private void KoordinatorSayfasiAc(int i)
         {
-            BolumKoordinatoru bolumKoordinatorSayfasi = new BolumKoordinatoru(i, true);
+            BolumKoordinatoru bolumKoordinatorSayfasi = new BolumKoordinatoru(i);
             bolumKoordinatorSayfasi.Show();
             this.Hide();
         }
 
         private void BolumBilgisayar_Click(object sender, EventArgs e)
         {
-            KoordinatorSayfasiAc(0);
+            KoordinatorSayfasiAc(1);
         }
 
         private void BolumYazilim_Click(object sender, EventArgs e)
         {
-            KoordinatorSayfasiAc(1);
+            KoordinatorSayfasiAc(2);
         }
 
         private void BolumElektrik_Click(object sender, EventArgs e)
         {
-            KoordinatorSayfasiAc(2);
+            KoordinatorSayfasiAc(3);
         }
 
         private void BolumElektronik_Click(object sender, EventArgs e)
         {
-            KoordinatorSayfasiAc(3);
+            KoordinatorSayfasiAc(4);
         }
 
         private void Bolumİnsaat_Click(object sender, EventArgs e)
         {
-            KoordinatorSayfasiAc(4);
+            KoordinatorSayfasiAc(5);
         }
     }
 }

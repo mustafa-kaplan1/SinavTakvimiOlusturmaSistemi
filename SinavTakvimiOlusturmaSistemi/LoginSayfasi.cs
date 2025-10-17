@@ -36,7 +36,7 @@ namespace SinavTakvimiOlusturmaSistemi
                 hatamesajLabel.Text = "Eposta ve sifre bos birakilamaz!";
             }
 
-            string connectionString = "Data Source=.;Initial Catalog=Yazlab1SinavOlustur;Integrated Security=True";
+            string connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=Yazlab1SinavOlustur;Trusted_Connection=True;TrustServerCertificate=True;";
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -44,7 +44,7 @@ namespace SinavTakvimiOlusturmaSistemi
                 {
                     conn.Open();
 
-                    string query = "SELECT * FROM Kullanici WHERE KullaniciEposta = @eposta AND Sifre = @sifre";
+                    string query = "SELECT * FROM Kullanici WHERE KullaniciEposta=@eposta AND Sifre=@sifre";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -55,12 +55,15 @@ namespace SinavTakvimiOlusturmaSistemi
                         {
                             if (reader.Read())
                             {
-                                string kullanici_tipi = reader["KullaniciTipi"].ToString();
+                                // Verileri modelimize aktar
+                                KullaniciBilgileri.Instance.Eposta = reader["KullaniciEposta"].ToString();
+                                KullaniciBilgileri.Instance.Rol = reader["KullaniciTipi"].ToString();
+
                                 GirisYap();
                             }
                             else
                             {
-                                MessageBox.Show("Eposta veya sifre hatali!");
+                                hatamesajLabel.Text = "Eposta veya sifre hatali!";
                             }
                         }
                     }
@@ -75,7 +78,19 @@ namespace SinavTakvimiOlusturmaSistemi
 
         private void GirisYap()
         {
-
+            string kullaniciRol = KullaniciBilgileri.Instance.Rol;
+            if (kullaniciRol == "Admin")
+            {
+                AdminPanel adminPanel = new AdminPanel();
+                adminPanel.Show();
+                this.Hide();
+            }
+            else
+            {
+                BolumKoordinatoru bolumKoordinatorSayfasi = new BolumKoordinatoru(0);
+                bolumKoordinatorSayfasi.Show();
+                this.Hide();
+            }
         }
     }
 }
