@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Data.SqlClient;
+
+
 
 namespace SinavTakvimiOlusturmaSistemi
 {
@@ -24,12 +27,54 @@ namespace SinavTakvimiOlusturmaSistemi
 
         private void girisyapButton_Click(object sender, EventArgs e)
         {
-            if(epostaTextBox.Text=="admin" && SifreTextBox.Text == "123")
+            string eposta = epostaTextBox.Text.Trim();
+            string sifre = SifreTextBox.Text.Trim();
+
+            if (string.IsNullOrEmpty(eposta) || string.IsNullOrEmpty(sifre))
             {
-                AdminPanel adminPanel = new AdminPanel();
-                adminPanel.Show();
-                this.Hide();
+                hatamesajLabel.Show();
+                hatamesajLabel.Text = "Eposta ve sifre bos birakilamaz!";
             }
+
+            string connectionString = "Data Source=.;Initial Catalog=Yazlab1SinavOlustur;Integrated Security=True";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    string query = "SELECT * FROM Kullanici WHERE KullaniciEposta = @eposta AND Sifre = @sifre";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@eposta", eposta);
+                        cmd.Parameters.AddWithValue("@sifre", sifre);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string kullanici_tipi = reader["KullaniciTipi"].ToString();
+                                GirisYap();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Eposta veya sifre hatali!");
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Hata: " + ex.Message);
+                }
+
+            }
+        }
+
+        private void GirisYap()
+        {
 
         }
     }

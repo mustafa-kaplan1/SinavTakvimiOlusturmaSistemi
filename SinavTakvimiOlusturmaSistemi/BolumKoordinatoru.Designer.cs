@@ -99,8 +99,9 @@
             buttonAdminMenu.Name = "buttonAdminMenu";
             buttonAdminMenu.Size = new Size(75, 62);
             buttonAdminMenu.TabIndex = 6;
-            buttonAdminMenu.Text = "Admin Menüsüne Dön";
+            buttonAdminMenu.Text = "Çıkış";
             buttonAdminMenu.UseVisualStyleBackColor = true;
+            buttonAdminMenu.Click += buttonAdminMenu_Click;
             // 
             // buttonDersListeİncele
             // 
@@ -146,6 +147,7 @@
             Controls.Add(textBoxAra);
             Name = "BolumKoordinatoru";
             Text = "BolumKoordinatoru";
+            Load += BolumKoordinatoru_Load;
             ResumeLayout(false);
             PerformLayout();
         }
