@@ -127,9 +127,9 @@
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(textBox1);
             groupBox1.Controls.Add(label1);
-            groupBox1.Location = new Point(483, 37);
+            groupBox1.Location = new Point(435, 37);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(291, 172);
+            groupBox1.Size = new Size(339, 172);
             groupBox1.TabIndex = 7;
             groupBox1.TabStop = false;
             groupBox1.Text = "Kullancı Ekle";
@@ -166,17 +166,19 @@
             // 
             // comboBox1
             // 
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "Bilgisayar Muhendisligi", "Yazilim Muhendisligi", "Elektrik Muhendisligi", "Elektronik Muhendisligi", "Insaat Muhendisligi" });
             comboBox1.Location = new Point(151, 101);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(121, 23);
+            comboBox1.Size = new Size(149, 23);
             comboBox1.TabIndex = 4;
             // 
             // textBox2
             // 
             textBox2.Location = new Point(151, 59);
             textBox2.Name = "textBox2";
-            textBox2.Size = new Size(100, 23);
+            textBox2.Size = new Size(149, 23);
             textBox2.TabIndex = 3;
             // 
             // label2
@@ -192,7 +194,7 @@
             // 
             textBox1.Location = new Point(151, 21);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(100, 23);
+            textBox1.Size = new Size(149, 23);
             textBox1.TabIndex = 1;
             // 
             // label1

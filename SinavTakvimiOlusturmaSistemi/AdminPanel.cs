@@ -39,7 +39,7 @@ namespace SinavTakvimiOlusturmaSistemi
                 }
                 textBox1.Clear();
                 textBox2.Clear();
-                //comboBox1
+                comboBox1.SelectedIndex = -1;
                 groupBox1.Hide();
             }
             else
@@ -57,7 +57,7 @@ namespace SinavTakvimiOlusturmaSistemi
         {
             textBox1.Clear();
             textBox2.Clear();
-            //comboBox1
+            comboBox1.SelectedIndex = -1;
             groupBox1.Hide();
         }
 
@@ -68,36 +68,38 @@ namespace SinavTakvimiOlusturmaSistemi
             this.Hide();
         }
 
-        private void KoordinatorSayfasiAc(int i)
+        private void KoordinatorSayfasiAc()
         {
-            BolumKoordinatoru bolumKoordinatorSayfasi = new BolumKoordinatoru(i);
+            BolumKoordinatoru bolumKoordinatorSayfasi = new BolumKoordinatoru();
             bolumKoordinatorSayfasi.Show();
             this.Hide();
         }
 
         private void BolumBilgisayar_Click(object sender, EventArgs e)
         {
-            KoordinatorSayfasiAc(1);
+            KullaniciBilgileri.Instance.AdminRol = "Bilgisayar Muhendisligi";
+            KoordinatorSayfasiAc();
         }
 
         private void BolumYazilim_Click(object sender, EventArgs e)
         {
-            KoordinatorSayfasiAc(2);
+            KullaniciBilgileri.Instance.AdminRol = "Yazilim Muhendisligi";
+            KoordinatorSayfasiAc();
         }
 
         private void BolumElektrik_Click(object sender, EventArgs e)
-        {
-            KoordinatorSayfasiAc(3);
+        {KullaniciBilgileri.Instance.AdminRol = "Elektrik Muhendisligi";  
+            KoordinatorSayfasiAc();
         }
 
         private void BolumElektronik_Click(object sender, EventArgs e)
-        {
-            KoordinatorSayfasiAc(4);
+        {KullaniciBilgileri.Instance.AdminRol = "Elektronik Muhendisligi";
+            KoordinatorSayfasiAc();
         }
 
         private void Bolumİnsaat_Click(object sender, EventArgs e)
-        {
-            KoordinatorSayfasiAc(5);
+        {KullaniciBilgileri.Instance.AdminRol = "Insaat Muhendisligi";
+            KoordinatorSayfasiAc();
         }
     }
 }

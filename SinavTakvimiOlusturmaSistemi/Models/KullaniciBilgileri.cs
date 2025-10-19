@@ -2,6 +2,7 @@
 {
     public string Eposta { get; set; }
     public string Rol { get; set; }
+    public string AdminRol { get; set; }
 
     // Singleton instance
     private static KullaniciBilgileri? instance = null;

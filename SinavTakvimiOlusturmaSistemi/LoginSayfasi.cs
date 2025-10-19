@@ -58,7 +58,7 @@ namespace SinavTakvimiOlusturmaSistemi
                                 // Verileri modelimize aktar
                                 KullaniciBilgileri.Instance.Eposta = reader["KullaniciEposta"].ToString();
                                 KullaniciBilgileri.Instance.Rol = reader["KullaniciTipi"].ToString();
-
+                                KullaniciBilgileri.Instance.AdminRol = KullaniciBilgileri.Instance.Rol;
                                 GirisYap();
                             }
                             else
@@ -72,7 +72,6 @@ namespace SinavTakvimiOlusturmaSistemi
                 {
                     MessageBox.Show("Hata: " + ex.Message);
                 }
-
             }
         }
 
@@ -87,7 +86,7 @@ namespace SinavTakvimiOlusturmaSistemi
             }
             else
             {
-                BolumKoordinatoru bolumKoordinatorSayfasi = new BolumKoordinatoru(0);
+                BolumKoordinatoru bolumKoordinatorSayfasi = new BolumKoordinatoru();
                 bolumKoordinatorSayfasi.Show();
                 this.Hide();
             }

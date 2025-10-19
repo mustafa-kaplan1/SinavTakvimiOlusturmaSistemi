@@ -12,22 +12,15 @@ namespace SinavTakvimiOlusturmaSistemi
 {
     public partial class BolumKoordinatoru : Form
     {
-        private int bolumKodu;
-        private string bolumAdi;
-        private bool isAdmin;
-        public BolumKoordinatoru(int adminRol)
+        string rol;
+        public BolumKoordinatoru()
         {
-
             InitializeComponent();
 
-            this.isAdmin = isAdmin;
-            this.bolumKodu = bolumKodu;
-            bolumAdi = BolumAdiGetir(bolumKodu);
-            this.Text = bolumAdi + " Koordinatorlugu"; // Form basligi degistirilir
-            labelBolumAdi.Text = bolumAdi + " Koordinatorlugu";
+            rol = KullaniciBilgileri.Instance.AdminRol;
 
-            if(isAdmin)
-                buttonAdminMenu.Text = "Admin Menüsüne Dön";
+            this.Text = rol + " Koordinatorlugu";
+            labelBolumAdi.Text = rol + " Koordinatorlugu";
         }
 
         private void DersListeYukleButton_Click(object sender, EventArgs e)
@@ -40,28 +33,9 @@ namespace SinavTakvimiOlusturmaSistemi
 
         }
 
-        private string BolumAdiGetir(int kod)
-        {
-            switch (kod)
-            {
-                case 0:
-                    return "Bilgisayar Muhendisligi";
-                case 1:
-                    return "Yazilim Muhendisligi";
-                case 2:
-                    return "Elektrik Muhendisligi";
-                case 3:
-                    return "Elektronik Muhendisligi";
-                case 4:
-                    return "Insaat Muhendisligi";
-                default:
-                    return "Bilinmeyen Bolum";
-            }
-        }
-
         private void buttonAdminMenu_Click(object sender, EventArgs e)
         {
-            if (isAdmin)
+            if (rol == "Admin")
             {
                 AdminPanel adminPanel = new AdminPanel();
                 adminPanel.Show();
@@ -73,6 +47,13 @@ namespace SinavTakvimiOlusturmaSistemi
                 loginSayfasi.Show();
                 this.Hide();
             }
+        }
+
+        private void buttonSinifMenusu_Click(object sender, EventArgs e)
+        {
+            SinifMenusu sinifMenu = new SinifMenusu();
+            sinifMenu.Show();
+            this.Hide();
         }
     }
 }

@@ -86,6 +86,7 @@
             hatamesajLabel.Size = new Size(207, 15);
             hatamesajLabel.TabIndex = 5;
             hatamesajLabel.Text = "epostanızı veya şifrenizi hatalı girdiniz!";
+            hatamesajLabel.Visible = false;
             // 
             // LoginSayfasi
             // 
