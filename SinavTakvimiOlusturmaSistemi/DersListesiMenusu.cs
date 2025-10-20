@@ -44,6 +44,8 @@ namespace SinavTakvimiOlusturmaSistemi
                     MessageBox.Show("Seçilen dosya: " + secilenDosyaYolu);
 
                     DersOku(secilenDosyaYolu);
+                    DersListesiDAL.DersListesiEkle();
+
                     dataGridView1.DataSource = DersListesi.Instance.TumDersler;
                 }
             }
@@ -83,6 +85,30 @@ namespace SinavTakvimiOlusturmaSistemi
             }
 
             return;
+        }
+
+        private void buttonAra_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(textBoxAra.Text))
+            {
+                string dersKod = textBoxAra.Text;
+                Ders? ders = DersListesi.Instance.TumDersler.FirstOrDefault(d => d.DersKodu == dersKod);
+                if (ders != null)
+                {
+                    string baslik = ders.DersKodu + " " + ders.DersAdi;
+                    string content=" "; //////!!!!!!!!!!!!!!!!!!!!
+
+                    groupBoxDersBilgi.Show();
+                    groupBoxDersBilgi.Text = baslik;
+                    label2.Text = content;
+                    return;
+                }
+            }
+        }
+
+        private void buttonGroupBoxKapat_Click(object sender, EventArgs e)
+        {
+            groupBoxDersBilgi.Hide();
         }
     }
 }

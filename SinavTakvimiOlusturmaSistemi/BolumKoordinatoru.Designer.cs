@@ -40,7 +40,7 @@
             // 
             labelBolumAdi.AutoSize = true;
             labelBolumAdi.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
-            labelBolumAdi.Location = new Point(197, 74);
+            labelBolumAdi.Location = new Point(195, 74);
             labelBolumAdi.Name = "labelBolumAdi";
             labelBolumAdi.Size = new Size(396, 28);
             labelBolumAdi.TabIndex = 3;
@@ -58,7 +58,7 @@
             // 
             // buttonDersListeİncele
             // 
-            buttonDersListeİncele.Location = new Point(318, 216);
+            buttonDersListeİncele.Location = new Point(317, 216);
             buttonDersListeİncele.Name = "buttonDersListeİncele";
             buttonDersListeİncele.Size = new Size(152, 23);
             buttonDersListeİncele.TabIndex = 7;
@@ -68,7 +68,7 @@
             // 
             // buttonOgrenciListeIncele
             // 
-            buttonOgrenciListeIncele.Location = new Point(318, 265);
+            buttonOgrenciListeIncele.Location = new Point(317, 265);
             buttonOgrenciListeIncele.Name = "buttonOgrenciListeIncele";
             buttonOgrenciListeIncele.Size = new Size(152, 23);
             buttonOgrenciListeIncele.TabIndex = 8;
@@ -78,7 +78,7 @@
             // 
             // buttonProgramOlustur
             // 
-            buttonProgramOlustur.Location = new Point(295, 335);
+            buttonProgramOlustur.Location = new Point(293, 335);
             buttonProgramOlustur.Name = "buttonProgramOlustur";
             buttonProgramOlustur.Size = new Size(201, 47);
             buttonProgramOlustur.TabIndex = 9;

@@ -33,7 +33,12 @@
             buttonAra = new Button();
             textBoxAra = new TextBox();
             dataGridView1 = new DataGridView();
+            groupBoxDersBilgi = new GroupBox();
+            label2 = new Label();
+            label1 = new Label();
+            buttonGroupBoxKapat = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            groupBoxDersBilgi.SuspendLayout();
             SuspendLayout();
             // 
             // buttonExcel
@@ -48,7 +53,7 @@
             // 
             // butonExit
             // 
-            butonExit.Location = new Point(95, 14);
+            butonExit.Location = new Point(95, 13);
             butonExit.Name = "butonExit";
             butonExit.Size = new Size(71, 23);
             butonExit.TabIndex = 7;
@@ -58,16 +63,17 @@
             // 
             // buttonAra
             // 
-            buttonAra.Location = new Point(752, 14);
+            buttonAra.Location = new Point(752, 13);
             buttonAra.Name = "buttonAra";
             buttonAra.Size = new Size(35, 23);
             buttonAra.TabIndex = 6;
             buttonAra.Text = "Ara";
             buttonAra.UseVisualStyleBackColor = true;
+            buttonAra.Click += buttonAra_Click;
             // 
             // textBoxAra
             // 
-            textBoxAra.Location = new Point(577, 14);
+            textBoxAra.Location = new Point(577, 13);
             textBoxAra.Name = "textBoxAra";
             textBoxAra.Size = new Size(169, 23);
             textBoxAra.TabIndex = 5;
@@ -80,11 +86,55 @@
             dataGridView1.Size = new Size(776, 376);
             dataGridView1.TabIndex = 8;
             // 
+            // groupBoxDersBilgi
+            // 
+            groupBoxDersBilgi.Controls.Add(label2);
+            groupBoxDersBilgi.Controls.Add(label1);
+            groupBoxDersBilgi.Controls.Add(buttonGroupBoxKapat);
+            groupBoxDersBilgi.Location = new Point(12, 59);
+            groupBoxDersBilgi.Name = "groupBoxDersBilgi";
+            groupBoxDersBilgi.Size = new Size(776, 376);
+            groupBoxDersBilgi.TabIndex = 9;
+            groupBoxDersBilgi.TabStop = false;
+            groupBoxDersBilgi.Text = "Ders Bilgileri";
+            groupBoxDersBilgi.Visible = false;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 9F);
+            label2.Location = new Point(33, 69);
+            label2.Name = "label2";
+            label2.Size = new Size(38, 15);
+            label2.TabIndex = 2;
+            label2.Text = "label2";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 12F);
+            label1.Location = new Point(25, 33);
+            label1.Name = "label1";
+            label1.Size = new Size(161, 21);
+            label1.TabIndex = 1;
+            label1.Text = "Dersi Alan Öğrenciler:";
+            // 
+            // buttonGroupBoxKapat
+            // 
+            buttonGroupBoxKapat.Location = new Point(713, 22);
+            buttonGroupBoxKapat.Name = "buttonGroupBoxKapat";
+            buttonGroupBoxKapat.Size = new Size(51, 23);
+            buttonGroupBoxKapat.TabIndex = 0;
+            buttonGroupBoxKapat.Text = "kapat";
+            buttonGroupBoxKapat.UseVisualStyleBackColor = true;
+            buttonGroupBoxKapat.Click += buttonGroupBoxKapat_Click;
+            // 
             // DersListesiMenusu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(groupBoxDersBilgi);
             Controls.Add(dataGridView1);
             Controls.Add(butonExit);
             Controls.Add(buttonAra);
@@ -94,6 +144,8 @@
             Text = "DersListesiMenusu";
             Load += DersListesiMenusu_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            groupBoxDersBilgi.ResumeLayout(false);
+            groupBoxDersBilgi.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -105,5 +157,9 @@
         private Button buttonAra;
         private TextBox textBoxAra;
         private DataGridView dataGridView1;
+        private GroupBox groupBoxDersBilgi;
+        private Label label1;
+        private Button buttonGroupBoxKapat;
+        private Label label2;
     }
 }

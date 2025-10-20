@@ -12,6 +12,7 @@ public static class DersListesiDAL // (DAL – Data Access Layer)
     {
         using (SqlConnection con = new SqlConnection(connectionString))
         {
+            DersListesiSil();
             con.Open();
             string query = "INSERT INTO Dersler (DersKodu, DersAdi, DersOgretmeni, BolumAdi, DersYili) " +
                            "VALUES (@DersKodu, @DersAdi, @DersOgretmeni, @BolumAdi, @DersYili)";

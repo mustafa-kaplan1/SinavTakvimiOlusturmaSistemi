@@ -21,6 +21,11 @@ namespace SinavTakvimiOlusturmaSistemi
 
             this.Text = rol + " Koordinatorlugu";
             labelBolumAdi.Text = rol + " Koordinatorlugu";
+
+            if (KullaniciBilgileri.Instance.Rol == "Admin")
+            {
+                buttonAdminMenu.Text = "Admin Menüsüne Dön";
+            }
         }
 
         private void DersListeYukleButton_Click(object sender, EventArgs e)

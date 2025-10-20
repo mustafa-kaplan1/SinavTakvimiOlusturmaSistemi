@@ -145,7 +145,7 @@ namespace SinavTakvimiOlusturmaSistemi
             if (!string.IsNullOrEmpty(textBoxAra.Text))
             {
                 derslikKod = textBoxAra.Text;
-                Derslik derslik = Derslikler.Instance.TumDerslikler.FirstOrDefault(d => d.DerslikKodu == derslikKod);
+                Derslik ?derslik = Derslikler.Instance.TumDerslikler.FirstOrDefault(d => d.DerslikKodu == derslikKod);
                 if (derslik != null) {
                     SinifDetay sinifDetay = new SinifDetay(derslikKod);
                     sinifDetay.Show();
