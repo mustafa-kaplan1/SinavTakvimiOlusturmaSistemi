@@ -119,7 +119,7 @@ namespace SinavTakvimiOlusturmaSistemi
         private void dataGridBtnEkle()
         {
             DataGridViewButtonColumn btn_col = new DataGridViewButtonColumn();
-            btn_col.HeaderText = "Islem";
+            btn_col.HeaderText = "+";
             btn_col.Name = "detayBtn";
             btn_col.Text = "";
             btn_col.UseColumnTextForButtonValue = true;

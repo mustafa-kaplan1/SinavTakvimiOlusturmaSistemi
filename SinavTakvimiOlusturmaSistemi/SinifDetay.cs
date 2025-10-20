@@ -46,7 +46,7 @@ namespace SinavTakvimiOlusturmaSistemi
             Derslik d = Derslikler.Instance.TumDerslikler.FirstOrDefault(d => d.DerslikKodu == derslikKod);
             int yatay = d.EnineSiraSayisi;
             int dikey = d.BoyunaSiraSayisi;
-            int tip = d.SiraYapisi; 
+            int tip = d.SiraYapisi;
 
             for (int x = 0; x < tip * yatay + (yatay - 1); x++)
             {
@@ -74,6 +74,30 @@ namespace SinavTakvimiOlusturmaSistemi
         private void buttonDelete_Click(object sender, EventArgs e)
         {
 
+            DialogResult result = MessageBox.Show(
+            $"Derslik Kodu {derslikKod} olan sınıf silinecek. Emin misiniz?", "Onay",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                // Kullanıcı onayladıysa silme işlemi
+                Derslik d = Derslikler.Instance.TumDerslikler.FirstOrDefault(d => d.DerslikKodu == derslikKod);
+                if (d != null)
+                {
+                    Derslikler.Instance.TumDerslikler.Remove(d);
+                    DerslikDAL.DerslikSil(d.DerslikKodu);
+                    MessageBox.Show("Derslik silindi.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Derslik bulunamadi!", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                // Kullanıcı hayır dedi
+                MessageBox.Show("İşlem iptal edildi.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }

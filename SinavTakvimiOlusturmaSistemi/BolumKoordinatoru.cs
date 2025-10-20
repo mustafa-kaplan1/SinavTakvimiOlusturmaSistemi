@@ -35,7 +35,7 @@ namespace SinavTakvimiOlusturmaSistemi
 
         private void buttonAdminMenu_Click(object sender, EventArgs e)
         {
-            if (rol == "Admin")
+            if (KullaniciBilgileri.Instance.Rol == "Admin")
             {
                 AdminPanel adminPanel = new AdminPanel();
                 adminPanel.Show();
@@ -53,6 +53,20 @@ namespace SinavTakvimiOlusturmaSistemi
         {
             SinifMenusu sinifMenu = new SinifMenusu();
             sinifMenu.Show();
+            this.Hide();
+        }
+
+        private void buttonDersListeİncele_Click(object sender, EventArgs e)
+        {
+            DersListesiMenusu menu = new DersListesiMenusu();
+            menu.Show();
+            this.Hide();
+        }
+
+        private void buttonOgrenciListeIncele_Click(object sender, EventArgs e)
+        {
+            OgrenciListesiMenusu menu = new OgrenciListesiMenusu();
+            menu.Show();
             this.Hide();
         }
     }

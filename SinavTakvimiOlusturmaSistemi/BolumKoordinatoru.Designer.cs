@@ -64,6 +64,7 @@
             buttonDersListeİncele.TabIndex = 7;
             buttonDersListeİncele.Text = "Ders Listesi Menüsü";
             buttonDersListeİncele.UseVisualStyleBackColor = true;
+            buttonDersListeİncele.Click += buttonDersListeİncele_Click;
             // 
             // buttonOgrenciListeIncele
             // 
@@ -73,6 +74,7 @@
             buttonOgrenciListeIncele.TabIndex = 8;
             buttonOgrenciListeIncele.Text = "Öğrenci Listesi Menüsü";
             buttonOgrenciListeIncele.UseVisualStyleBackColor = true;
+            buttonOgrenciListeIncele.Click += buttonOgrenciListeIncele_Click;
             // 
             // buttonProgramOlustur
             // 

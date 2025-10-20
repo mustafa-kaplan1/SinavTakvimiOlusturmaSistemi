@@ -27,6 +27,27 @@ public static class DerslikDAL // (DAL – Data Access Layer)
         }
     }
 
+    public static void DerslikSil(string derslikKodu)
+    {
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            conn.Open();
+            string query = "DELETE FROM Derslikler WHERE DerslikKodu = @DerslikKodu";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@DerslikKodu", derslikKodu);
+                int etkilenenSatir = cmd.ExecuteNonQuery();
+
+                if (etkilenenSatir == 0)
+                {
+                    // Silinecek kayıt bulunamadı
+                    throw new Exception("Derslik veritabanında bulunamadı.");
+                }
+            }
+        }
+    }
+
     public static List<Derslik> TumDerslikleriGetir()
     {
         List<Derslik> derslikListesi = new List<Derslik>();
