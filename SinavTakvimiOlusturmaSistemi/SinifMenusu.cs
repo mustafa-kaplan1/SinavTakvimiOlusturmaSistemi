@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +19,7 @@ namespace SinavTakvimiOlusturmaSistemi
             InitializeComponent();
 
             textBox1.ReadOnly = true;
-            textBox1.Text = KullaniciBilgileri.Instance.AdminRol;            
+            textBox1.Text = KullaniciBilgileri.Instance.AdminRol;
         }
 
         private void SinifMenusu_Load(object sender, EventArgs e)
@@ -126,14 +127,34 @@ namespace SinavTakvimiOlusturmaSistemi
         }
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            Console.WriteLine("a");
             if (e.ColumnIndex == dataGridView1.Columns["detayBtn"].Index && e.RowIndex >= 0)
             {
-                int btnIndex = e.RowIndex;
-                SinifDetay sinifDetay = new SinifDetay(btnIndex);
+                string ?derslikKodu = dataGridView1.Rows[e.RowIndex].Cells["DerslikKodu"].Value.ToString();
+
+                // Parametre olarak kodu gonder
+                SinifDetay sinifDetay = new SinifDetay(derslikKodu);
                 sinifDetay.Show();
+
                 this.Hide();
             }
+        }
+
+        private void buttonAra_Click(object sender, EventArgs e)
+        {
+            string derslikKod;
+            if (!string.IsNullOrEmpty(textBoxAra.Text))
+            {
+                derslikKod = textBoxAra.Text;
+                Derslik derslik = Derslikler.Instance.TumDerslikler.FirstOrDefault(d => d.DerslikKodu == derslikKod);
+                if (derslik != null) {
+                    SinifDetay sinifDetay = new SinifDetay(derslikKod);
+                    sinifDetay.Show();
+
+                    this.Hide();
+                    return;
+                }
+            }
+            MessageBox.Show("geçersiz değer");
         }
     }
 }

@@ -12,52 +12,68 @@ namespace SinavTakvimiOlusturmaSistemi
 {
     public partial class SinifDetay : Form
     {
-        int sinifIndex;
-        public SinifDetay(int sinifIndex)
+        string derslikKod;
+        public SinifDetay(string derslikKod)
         {
             InitializeComponent();
 
-            this.sinifIndex = sinifIndex;
+            this.derslikKod = derslikKod;
+            this.Paint += SiraCiz;
         }
 
         private void SinifDetay_Load(object sender, EventArgs e)
         {
+            Derslik d = Derslikler.Instance.TumDerslikler.FirstOrDefault(d => d.DerslikKodu == derslikKod);
 
+            labelSinifOzellik.Text =
+                $"Bolum Adi: {d.BolumAdi}, " +
+                $"Derslik Kodu: {d.DerslikKodu}, " +
+                $"Derslik Adi: {d.DerslikAdi}, " +
+                $"Derslik Kapasitesi: {d.DerslikKapasitesi}, " +
+                $"Enine Sira Sayisi: {d.EnineSiraSayisi}, " +
+                $"Boyuna Sira Sayisi: {d.BoyunaSiraSayisi}, " +
+                $"Sira Yapisi: {d.SiraYapisi}";
         }
 
         private void SiraCiz(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
 
-            int offset = 10;
-            int bosluk = 10;
-            int kareBoyutu = 30;
+            int offset = 30;
+            int kareBoyutu = 20;
 
             // Örnek: 5x5 kareler
-            int yatay = Derslikler.Instance.TumDerslikler[sinifIndex].EnineSiraSayisi;
-            int dikey = Derslikler.Instance.TumDerslikler[sinifIndex].BoyunaSiraSayisi;
-            int tip = Derslikler.Instance.TumDerslikler[sinifIndex].SiraYapisi;
+            Derslik d = Derslikler.Instance.TumDerslikler.FirstOrDefault(d => d.DerslikKodu == derslikKod);
+            int yatay = d.EnineSiraSayisi;
+            int dikey = d.BoyunaSiraSayisi;
+            int tip = d.SiraYapisi; 
 
-            for (int satir = 0; satir < yatay; satir++) //! DUzELT
+            for (int x = 0; x < tip * yatay + (yatay - 1); x++)
             {
-                for (int sutun = 0; sutun < dikey; sutun++)
+                for (int y = 0; y < dikey * 2; y++)
                 {
-                    for (int k = 0; k < tip; k++)
+                    if (x % (tip + 1) != tip && y % 2 == 1)
                     {
-                        int x = ((sutun + 1) % tip) * (tip * kareBoyutu + bosluk) + sutun * kareBoyutu;
-                        int y = ((satir + 1) % tip) * (tip * kareBoyutu + bosluk) + sutun * kareBoyutu;
-
+                        int px = offset + x * kareBoyutu;
+                        int py = offset + y * kareBoyutu;
                         // Kareyi çiz
-                        g.FillRectangle(Brushes.LightBlue, x, y, kareBoyutu, kareBoyutu);
-                        g.DrawRectangle(Pens.Black, x, y, kareBoyutu, kareBoyutu);
-
-                        // Kare içine metin yazmak (opsiyonel)
-                        string text = $"K{sutun + 1}S{satir + 1}";
-                        g.DrawString(text, this.Font, Brushes.Black, x + 5, y + 5);
+                        g.FillRectangle(Brushes.LightBlue, px, py, kareBoyutu, kareBoyutu);
+                        g.DrawRectangle(Pens.Black, px, py, kareBoyutu, kareBoyutu);
                     }
                 }
             }
         }
 
+        private void buttonGeriDon_Click(object sender, EventArgs e)
+        {
+            SinifMenusu sinifMenu = new SinifMenusu();
+            sinifMenu.Show();
+            this.Hide();
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

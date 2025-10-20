@@ -70,6 +70,7 @@
             buttonAra.TabIndex = 1;
             buttonAra.Text = "Ara";
             buttonAra.UseVisualStyleBackColor = true;
+            buttonAra.Click += buttonAra_Click;
             // 
             // buttonYeniSınıf
             // 

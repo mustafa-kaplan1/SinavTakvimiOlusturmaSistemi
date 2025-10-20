@@ -28,19 +28,59 @@
         /// </summary>
         private void InitializeComponent()
         {
+            buttonGeriDon = new Button();
+            buttonDelete = new Button();
+            labelSinifOzellik = new Label();
             SuspendLayout();
+            // 
+            // buttonGeriDon
+            // 
+            buttonGeriDon.Location = new Point(11, 9);
+            buttonGeriDon.Name = "buttonGeriDon";
+            buttonGeriDon.Size = new Size(75, 23);
+            buttonGeriDon.TabIndex = 0;
+            buttonGeriDon.Text = "Geri Dön";
+            buttonGeriDon.UseVisualStyleBackColor = true;
+            buttonGeriDon.Click += buttonGeriDon_Click;
+            // 
+            // buttonDelete
+            // 
+            buttonDelete.Location = new Point(92, 9);
+            buttonDelete.Name = "buttonDelete";
+            buttonDelete.Size = new Size(86, 23);
+            buttonDelete.TabIndex = 1;
+            buttonDelete.Text = "Bu Sınıfı Sil";
+            buttonDelete.UseVisualStyleBackColor = true;
+            buttonDelete.Click += buttonDelete_Click;
+            // 
+            // labelSinifOzellik
+            // 
+            labelSinifOzellik.AutoSize = true;
+            labelSinifOzellik.Location = new Point(208, 13);
+            labelSinifOzellik.Name = "labelSinifOzellik";
+            labelSinifOzellik.Size = new Size(87, 15);
+            labelSinifOzellik.TabIndex = 2;
+            labelSinifOzellik.Text = "Sınıf Özellikleri:";
             // 
             // SinifDetay
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(labelSinifOzellik);
+            Controls.Add(buttonDelete);
+            Controls.Add(buttonGeriDon);
             Name = "SinifDetay";
             Text = "SinifDetay";
             Load += SinifDetay_Load;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Button buttonGeriDon;
+        private Button buttonDelete;
+        private Label labelSinifOzellik;
     }
 }
