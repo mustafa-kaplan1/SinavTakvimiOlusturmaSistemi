@@ -26,4 +26,37 @@ public static class DerslikDAL // (DAL – Data Access Layer)
             }
         }
     }
+
+    public static List<Derslik> TumDerslikleriGetir()
+    {
+        List<Derslik> derslikListesi = new List<Derslik>();
+
+        using (SqlConnection con = new SqlConnection(connectionString))
+        {
+            con.Open();
+            string query = "SELECT * FROM Derslikler";
+
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    Derslik d = new Derslik
+                    {
+                        BolumAdi = reader["BolumAdi"].ToString(),
+                        DerslikKodu = reader["DerslikKodu"].ToString(),
+                        DerslikAdi = reader["DerslikAdi"].ToString(),
+                        DerslikKapasitesi = Convert.ToInt32(reader["DerslikKapasitesi"]),
+                        EnineSiraSayisi = Convert.ToInt32(reader["EnineSiraSayisi"]),
+                        BoyunaSiraSayisi = Convert.ToInt32(reader["BoyunaSiraSayisi"]),
+                        SiraYapisi = Convert.ToInt32(reader["SiraYapisi"])
+                    };
+                    derslikListesi.Add(d);
+                }
+            }
+        }
+
+        return derslikListesi;
+    }
+
 }

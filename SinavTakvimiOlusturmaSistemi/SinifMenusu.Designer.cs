@@ -50,7 +50,9 @@
             label2 = new Label();
             label1 = new Label();
             butonExit = new Button();
+            dataGridView1 = new DataGridView();
             panelYeniSinif.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // textBoxAra
@@ -100,7 +102,7 @@
             panelYeniSinif.Controls.Add(label3);
             panelYeniSinif.Controls.Add(label2);
             panelYeniSinif.Controls.Add(label1);
-            panelYeniSinif.Location = new Point(66, 59);
+            panelYeniSinif.Location = new Point(142, 81);
             panelYeniSinif.Name = "panelYeniSinif";
             panelYeniSinif.Size = new Size(486, 322);
             panelYeniSinif.TabIndex = 3;
@@ -257,20 +259,32 @@
             butonExit.UseVisualStyleBackColor = true;
             butonExit.Click += butonExit_Click;
             // 
+            // dataGridView1
+            // 
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Location = new Point(12, 62);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.Size = new Size(776, 376);
+            dataGridView1.TabIndex = 5;
+            dataGridView1.CellClick += dataGridView1_CellClick;
+            // 
             // SinifMenusu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(butonExit);
             Controls.Add(panelYeniSinif);
+            Controls.Add(dataGridView1);
+            Controls.Add(butonExit);
             Controls.Add(buttonYeniSınıf);
             Controls.Add(buttonAra);
             Controls.Add(textBoxAra);
             Name = "SinifMenusu";
             Text = "SinifMenusu";
+            Load += SinifMenusu_Load;
             panelYeniSinif.ResumeLayout(false);
             panelYeniSinif.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -299,5 +313,6 @@
         private Label label1;
         private Button button2;
         private Button butonExit;
+        private DataGridView dataGridView1;
     }
 }

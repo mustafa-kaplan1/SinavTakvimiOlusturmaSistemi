@@ -11,7 +11,7 @@ namespace SinavTakvimiOlusturmaSistemi
         public int DerslikKapasitesi { get; set; }
         public int EnineSiraSayisi { get; set; }  // Sutun sayisi
         public int BoyunaSiraSayisi { get; set; } // Satir sayisi
-        public string SiraYapisi { get; set; }    // Ornegin "2'li" veya "3'erli"
+        public int SiraYapisi { get; set; }    // Ornegin "2'li" veya "3'erli"
     }
 
     public class Derslikler

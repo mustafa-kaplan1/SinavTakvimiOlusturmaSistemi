@@ -18,7 +18,13 @@ namespace SinavTakvimiOlusturmaSistemi
             InitializeComponent();
 
             textBox1.ReadOnly = true;
-            textBox1.Text = KullaniciBilgileri.Instance.AdminRol;
+            textBox1.Text = KullaniciBilgileri.Instance.AdminRol;            
+        }
+
+        private void SinifMenusu_Load(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = Derslikler.Instance.TumDerslikler;
+            dataGridBtnEkle();
         }
 
         private void buttonYeniSınıf_Click(object sender, EventArgs e)
@@ -92,22 +98,42 @@ namespace SinavTakvimiOlusturmaSistemi
                     DerslikKapasitesi = int.Parse(textBox4.Text),
                     EnineSiraSayisi = int.Parse(textBox5.Text),
                     BoyunaSiraSayisi = int.Parse(textBox6.Text),
-                    SiraYapisi = textBox7.Text
+                    SiraYapisi = int.Parse(textBox7.Text)
                 };
 
                 Derslikler.Instance.DerslikEkle(yeniDerslik); // Derslikler classını yoksa oluşturduk, derslik ekledik
 
                 DerslikDAL.DerslikEkle(yeniDerslik); // veritabanına eklendi
-
+                dataGridView1.DataSource = Derslikler.Instance.TumDerslikler;
+                dataGridBtnEkle();
                 panelYeniSinif.Hide();
             }
         }
-
         private void butonExit_Click(object sender, EventArgs e)
         {
             BolumKoordinatoru koordinatorSf = new BolumKoordinatoru();
             koordinatorSf.Show();
             this.Hide();
+        }
+        private void dataGridBtnEkle()
+        {
+            DataGridViewButtonColumn btn_col = new DataGridViewButtonColumn();
+            btn_col.HeaderText = "Islem";
+            btn_col.Name = "detayBtn";
+            btn_col.Text = "";
+            btn_col.UseColumnTextForButtonValue = true;
+            dataGridView1.Columns.Add(btn_col);
+        }
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Console.WriteLine("a");
+            if (e.ColumnIndex == dataGridView1.Columns["detayBtn"].Index && e.RowIndex >= 0)
+            {
+                int btnIndex = e.RowIndex;
+                SinifDetay sinifDetay = new SinifDetay(btnIndex);
+                sinifDetay.Show();
+                this.Hide();
+            }
         }
     }
 }
