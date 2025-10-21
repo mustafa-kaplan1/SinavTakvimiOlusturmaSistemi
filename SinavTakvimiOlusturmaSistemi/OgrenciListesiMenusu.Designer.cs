@@ -33,7 +33,12 @@
             buttonAra = new Button();
             textBoxAra = new TextBox();
             buttonExcel = new Button();
+            groupBoxOgrenciBilgi = new GroupBox();
+            label2 = new Label();
+            label1 = new Label();
+            buttonGroupBoxKapat = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            groupBoxOgrenciBilgi.SuspendLayout();
             SuspendLayout();
             // 
             // dataGridView1
@@ -52,6 +57,7 @@
             butonExit.TabIndex = 12;
             butonExit.Text = "Geri Dön";
             butonExit.UseVisualStyleBackColor = true;
+            butonExit.Click += butonExit_Click;
             // 
             // buttonAra
             // 
@@ -61,6 +67,7 @@
             buttonAra.TabIndex = 11;
             buttonAra.Text = "Ara";
             buttonAra.UseVisualStyleBackColor = true;
+            buttonAra.Click += buttonAra_Click;
             // 
             // textBoxAra
             // 
@@ -77,12 +84,57 @@
             buttonExcel.TabIndex = 9;
             buttonExcel.Text = "Excel Yükle";
             buttonExcel.UseVisualStyleBackColor = true;
+            buttonExcel.Click += buttonExcel_Click;
+            // 
+            // groupBoxOgrenciBilgi
+            // 
+            groupBoxOgrenciBilgi.Controls.Add(label2);
+            groupBoxOgrenciBilgi.Controls.Add(label1);
+            groupBoxOgrenciBilgi.Controls.Add(buttonGroupBoxKapat);
+            groupBoxOgrenciBilgi.Location = new Point(13, 60);
+            groupBoxOgrenciBilgi.Name = "groupBoxOgrenciBilgi";
+            groupBoxOgrenciBilgi.Size = new Size(776, 376);
+            groupBoxOgrenciBilgi.TabIndex = 14;
+            groupBoxOgrenciBilgi.TabStop = false;
+            groupBoxOgrenciBilgi.Text = "groupBox1";
+            groupBoxOgrenciBilgi.Visible = false;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 9F);
+            label2.Location = new Point(27, 64);
+            label2.Name = "label2";
+            label2.Size = new Size(38, 15);
+            label2.TabIndex = 5;
+            label2.Text = "label2";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 12F);
+            label1.Location = new Point(19, 28);
+            label1.Name = "label1";
+            label1.Size = new Size(107, 21);
+            label1.TabIndex = 4;
+            label1.Text = "Aldığı Dersler:";
+            // 
+            // buttonGroupBoxKapat
+            // 
+            buttonGroupBoxKapat.Location = new Point(707, 17);
+            buttonGroupBoxKapat.Name = "buttonGroupBoxKapat";
+            buttonGroupBoxKapat.Size = new Size(51, 23);
+            buttonGroupBoxKapat.TabIndex = 3;
+            buttonGroupBoxKapat.Text = "kapat";
+            buttonGroupBoxKapat.UseVisualStyleBackColor = true;
+            buttonGroupBoxKapat.Click += buttonGroupBoxKapat_Click;
             // 
             // OgrenciListesiMenusu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(groupBoxOgrenciBilgi);
             Controls.Add(dataGridView1);
             Controls.Add(butonExit);
             Controls.Add(buttonAra);
@@ -90,7 +142,10 @@
             Controls.Add(buttonExcel);
             Name = "OgrenciListesiMenusu";
             Text = "OgrenciListesiMenusu";
+            Load += OgrenciListesiMenusu_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            groupBoxOgrenciBilgi.ResumeLayout(false);
+            groupBoxOgrenciBilgi.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -102,5 +157,9 @@
         private Button buttonAra;
         private TextBox textBoxAra;
         private Button buttonExcel;
+        private GroupBox groupBoxOgrenciBilgi;
+        private Label label2;
+        private Label label1;
+        private Button buttonGroupBoxKapat;
     }
 }

@@ -83,8 +83,6 @@ namespace SinavTakvimiOlusturmaSistemi
                     DersListesi.Instance.DersEkle(d);
                 }
             }
-
-            return;
         }
 
         private void buttonAra_Click(object sender, EventArgs e)
