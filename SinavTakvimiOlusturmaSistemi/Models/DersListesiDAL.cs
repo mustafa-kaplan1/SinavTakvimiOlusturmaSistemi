@@ -8,11 +8,11 @@ public static class DersListesiDAL // (DAL – Data Access Layer)
     private static string connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=Yazlab1SinavOlustur;Trusted_Connection=True;TrustServerCertificate=True;";
 
     // Modeldeki tüm dersleri veritabanına ekler
-    public static void DersListesiEkle()
+    public static void ModelToSql()
     {
         using (SqlConnection con = new SqlConnection(connectionString))
         {
-            DersListesiSil();
+            SqlTemizle();
             con.Open();
             string query = "INSERT INTO Dersler (DersKodu, DersAdi, DersOgretmeni, BolumAdi, DersYili) " +
                            "VALUES (@DersKodu, @DersAdi, @DersOgretmeni, @BolumAdi, @DersYili)";
@@ -33,7 +33,7 @@ public static class DersListesiDAL // (DAL – Data Access Layer)
     }
 
     // Veritabanındaki Dersler tablosunu tamamen siler
-    public static void DersListesiSil()
+    public static void SqlTemizle()
     {
         using (SqlConnection conn = new SqlConnection(connectionString))
         {
@@ -47,7 +47,7 @@ public static class DersListesiDAL // (DAL – Data Access Layer)
     }
 
     // Singleton'daki listeyi sıfırlayıp veritabanından doldurur
-    public static void DersListesiGetir()
+    public static void SqlToModel()
     {
         // Önce singleton listeyi temizle
         DersListesi.Instance.TumDersler.Clear();

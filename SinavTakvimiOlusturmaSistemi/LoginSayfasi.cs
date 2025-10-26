@@ -79,6 +79,8 @@ namespace SinavTakvimiOlusturmaSistemi
         {
             string kullaniciRol = KullaniciBilgileri.Instance.Rol;
             Derslikler.Instance.TumDerslikler = DerslikDAL.TumDerslikleriGetir(); // veritabanından derslikleri Derslikler classına yerleştirdi
+            DersListesiDAL.SqlToModel();
+            OgrenciListesiDAL.SqlToModel();
             if (kullaniciRol == "Admin")
             {
                 AdminPanel adminPanel = new AdminPanel();

@@ -20,8 +20,8 @@ namespace SinavTakvimiOlusturmaSistemi
         }
         private void OgrenciListesiMenusu_Load(object sender, EventArgs e)
         {
-            OgrenciListesiDAL.SqlToModel();
             dataGridView1.DataSource = OgrenciListesi.Instance.TumOgrenciler;
+            dataGridBtnEkle();
         }
 
         private void butonExit_Click(object sender, EventArgs e)
@@ -48,6 +48,7 @@ namespace SinavTakvimiOlusturmaSistemi
                     OgrenciListesiDAL.ModelToSql();
 
                     dataGridView1.DataSource = OgrenciListesi.Instance.TumOgrenciler;
+                    dataGridBtnEkle();
                 }
             }
         }
@@ -95,27 +96,58 @@ namespace SinavTakvimiOlusturmaSistemi
             }
         }
 
-        private void buttonAra_Click(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(textBoxAra.Text))
-            {
-                string ogrenciNo = textBoxAra.Text;
-                Ogrenci? o = OgrenciListesi.Instance.TumOgrenciler.FirstOrDefault(o => o.OgrenciNo == ogrenciNo);
-                if (o != null)
-                {
-                    string baslik = "Öğrenci: " + o.OgrenciAd;
-                    string content = " "; //////!!!!!!!!!!!!!!!!!!!!
-
-                    groupBoxOgrenciBilgi.Show();
-                    groupBoxOgrenciBilgi.Text = baslik;
-                    label2.Text = content;
-                }
-            }
-        }
-
         private void buttonGroupBoxKapat_Click(object sender, EventArgs e)
         {
             groupBoxOgrenciBilgi.Hide();
+        }
+
+        private void dataGridBtnEkle()
+        {
+            DataGridViewButtonColumn btn_col = new DataGridViewButtonColumn();
+            btn_col.HeaderText = "+";
+            btn_col.Name = "detayBtn";
+            btn_col.Text = "Öğrenci Bilgi";
+            btn_col.UseColumnTextForButtonValue = true;
+            dataGridView1.Columns.Add(btn_col);
+        }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == dataGridView1.Columns["detayBtn"].Index && e.RowIndex >= 0)
+            {
+                string? ogrenciNo = dataGridView1.Rows[e.RowIndex].Cells["OgrenciNo"].Value.ToString();
+
+                detayGoster(ogrenciNo);
+            }
+        }
+
+        private void buttonAra_Click(object sender, EventArgs e)
+        {
+            string ogrenciNo = textBoxAra.Text;
+            if (!string.IsNullOrEmpty(ogrenciNo))
+            {
+                detayGoster(ogrenciNo);
+                return;
+            }
+            MessageBox.Show("geçersiz değer");
+        }
+
+        private void detayGoster(string ogrenciNo)
+        {
+            Ogrenci? ogrenci = OgrenciListesi.Instance.TumOgrenciler.FirstOrDefault(d => d.OgrenciNo == ogrenciNo);
+            if (ogrenci != null)
+            {
+                groupBoxOgrenciBilgi.Show();
+                groupBoxOgrenciBilgi.Text = ogrenci.OgrenciAd;
+                string content = "";
+                foreach (string s in ogrenci.OgrenciDersler)
+                {
+                    Ders? ders = DersListesi.Instance.TumDersler.FirstOrDefault(d => d.DersKodu == s);
+                    if (ders != null)
+                        content += ders.DersAdi + " (Kodu: " + s + ")\n";
+                }
+                label2.Text = content;
+            }
         }
     }
 }

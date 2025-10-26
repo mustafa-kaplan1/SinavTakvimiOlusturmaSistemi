@@ -23,5 +23,10 @@ namespace SinavTakvimiOlusturmaSistemi
             k.Show();
             this.Hide();
         }
+
+        private void SinavProgramOlustur_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

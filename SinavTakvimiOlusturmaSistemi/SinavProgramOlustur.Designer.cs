@@ -204,6 +204,7 @@
             Controls.Add(label1);
             Name = "SinavProgramOlustur";
             Text = "SinavProgramOlustur";
+            Load += SinavProgramOlustur_Load;
             ResumeLayout(false);
             PerformLayout();
         }

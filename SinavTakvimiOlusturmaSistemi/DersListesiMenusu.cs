@@ -20,7 +20,9 @@ namespace SinavTakvimiOlusturmaSistemi
 
         private void DersListesiMenusu_Load(object sender, EventArgs e)
         {
+            DersListesiDAL.SqlToModel();
             dataGridView1.DataSource = DersListesi.Instance.TumDersler;
+            dataGridBtnEkle();
         }
 
         private void butonExit_Click(object sender, EventArgs e)
@@ -44,9 +46,10 @@ namespace SinavTakvimiOlusturmaSistemi
                     MessageBox.Show("Seçilen dosya: " + secilenDosyaYolu);
 
                     DersOku(secilenDosyaYolu);
-                    DersListesiDAL.DersListesiEkle();
+                    DersListesiDAL.ModelToSql();
 
                     dataGridView1.DataSource = DersListesi.Instance.TumDersler;
+                    dataGridBtnEkle();
                 }
             }
         }
@@ -85,28 +88,58 @@ namespace SinavTakvimiOlusturmaSistemi
             }
         }
 
-        private void buttonAra_Click(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(textBoxAra.Text))
-            {
-                string dersKod = textBoxAra.Text;
-                Ders? ders = DersListesi.Instance.TumDersler.FirstOrDefault(d => d.DersKodu == dersKod);
-                if (ders != null)
-                {
-                    string baslik = ders.DersKodu + " " + ders.DersAdi;
-                    string content=" "; //////!!!!!!!!!!!!!!!!!!!!
-
-                    groupBoxDersBilgi.Show();
-                    groupBoxDersBilgi.Text = baslik;
-                    label2.Text = content;
-                    return;
-                }
-            }
-        }
-
         private void buttonGroupBoxKapat_Click(object sender, EventArgs e)
         {
-            groupBoxDersBilgi.Hide();
+            panel1.Hide();
+        }
+        private void dataGridBtnEkle()
+        {
+            DataGridViewButtonColumn btn_col = new DataGridViewButtonColumn();
+            btn_col.HeaderText = "+";
+            btn_col.Name = "detayBtn";
+            btn_col.Text = "Ders Bilgi";
+            btn_col.UseColumnTextForButtonValue = true;
+            dataGridView1.Columns.Add(btn_col);
+        }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == dataGridView1.Columns["detayBtn"].Index && e.RowIndex >= 0)
+            {
+                string? dersKod = dataGridView1.Rows[e.RowIndex].Cells["DersKodu"].Value.ToString();
+                detayGoster(dersKod);
+            }
+        }
+        private void buttonAra_Click(object sender, EventArgs e)
+        {
+                string dersKod = textBoxAra.Text;
+            if (!string.IsNullOrEmpty(dersKod))
+            {
+                detayGoster(dersKod);
+            }
+        }
+        private void detayGoster(string dersKodu)
+        {
+            Ders? ders = DersListesi.Instance.TumDersler.FirstOrDefault(d => d.DersKodu == dersKodu);
+            if (ders != null)
+            {
+                panel1.Show();
+                label3.Text = ders.DersAdi;
+                string content = "";
+
+                foreach (var ogrenci in OgrenciListesi.Instance.TumOgrenciler)
+                {
+                    foreach (string s in ogrenci.OgrenciDersler)
+                    {
+                        if (s == dersKodu)
+                        {
+                            content += ogrenci.OgrenciNo + " - " + ogrenci.OgrenciAd + "\n";
+                            continue;
+                        }
+                    }
+                }
+                label2.Text = content;
+            }
         }
     }
 }
