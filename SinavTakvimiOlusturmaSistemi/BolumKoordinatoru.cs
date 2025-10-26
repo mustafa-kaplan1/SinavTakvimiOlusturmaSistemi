@@ -74,5 +74,12 @@ namespace SinavTakvimiOlusturmaSistemi
             menu.Show();
             this.Hide();
         }
+
+        private void buttonProgramOlustur_Click(object sender, EventArgs e)
+        {
+            SinavProgramOlustur s = new SinavProgramOlustur();
+            s.Show();
+            this.Hide();
+        }
     }
 }

@@ -84,6 +84,7 @@
             buttonProgramOlustur.TabIndex = 9;
             buttonProgramOlustur.Text = "Sınav Programı Oluştur";
             buttonProgramOlustur.UseVisualStyleBackColor = true;
+            buttonProgramOlustur.Click += buttonProgramOlustur_Click;
             // 
             // buttonSinifMenusu
             // 

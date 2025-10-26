@@ -20,6 +20,7 @@ namespace SinavTakvimiOlusturmaSistemi
         }
         private void OgrenciListesiMenusu_Load(object sender, EventArgs e)
         {
+            OgrenciListesiDAL.SqlToModel();
             dataGridView1.DataSource = OgrenciListesi.Instance.TumOgrenciler;
         }
 
@@ -44,7 +45,7 @@ namespace SinavTakvimiOlusturmaSistemi
                     MessageBox.Show("Seçilen dosya: " + secilenDosyaYolu);
 
                     ExcelOku(secilenDosyaYolu);
-                    //OgrenciListesiDAL.OgrenciListesiEkle();
+                    OgrenciListesiDAL.ModelToSql();
 
                     dataGridView1.DataSource = OgrenciListesi.Instance.TumOgrenciler;
                 }

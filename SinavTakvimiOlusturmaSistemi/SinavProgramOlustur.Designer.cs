@@ -43,6 +43,7 @@
             checkedListBox1 = new CheckedListBox();
             CheckBoxSinavlarCakismasin = new CheckBox();
             buttonOlustur = new Button();
+            buttonExit = new Button();
             SuspendLayout();
             // 
             // label5
@@ -170,11 +171,22 @@
             buttonOlustur.Text = "Oluştur";
             buttonOlustur.UseVisualStyleBackColor = true;
             // 
+            // buttonExit
+            // 
+            buttonExit.Location = new Point(34, 380);
+            buttonExit.Name = "buttonExit";
+            buttonExit.Size = new Size(75, 23);
+            buttonExit.TabIndex = 16;
+            buttonExit.Text = "Geri Dön";
+            buttonExit.UseVisualStyleBackColor = true;
+            buttonExit.Click += buttonExit_Click;
+            // 
             // SinavProgramOlustur
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(buttonExit);
             Controls.Add(buttonOlustur);
             Controls.Add(CheckBoxSinavlarCakismasin);
             Controls.Add(label4);
@@ -212,5 +224,6 @@
         private TextBox textBox2;
         private CheckBox CheckBoxSinavlarCakismasin;
         private Button buttonOlustur;
+        private Button buttonExit;
     }
 }

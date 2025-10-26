@@ -16,5 +16,12 @@ namespace SinavTakvimiOlusturmaSistemi
         {
             InitializeComponent();
         }
+
+        private void buttonExit_Click(object sender, EventArgs e)
+        {
+            BolumKoordinatoru k = new BolumKoordinatoru();
+            k.Show();
+            this.Hide();
+        }
     }
 }
