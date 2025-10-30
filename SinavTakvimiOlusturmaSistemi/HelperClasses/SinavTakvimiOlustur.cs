@@ -157,17 +157,45 @@ namespace HelperClasses
 
         private void DersListesiOku()
         {
-            DateTime tarih = baslaTarih;
-            DateTime saat = DateTime.Today.AddHours(baslangicSaat).AddMinutes(baslangicdk);
+            DateTime baslangicSaati = DateTime.Today.AddHours(baslangicSaat).AddMinutes(baslangicdk);
             int sinavArasiBosluk = sinavSureDk + molaSureDk;
 
+            // Kullanılabilir günleri hesapla (hafta sonları hariç)
+            var kullanilabilirGunler = new List<DateTime>();
+            DateTime gunSayici = baslaTarih;
+
+            while (gunSayici <= bitisTarih)
+            {
+                if (gunSayici.DayOfWeek != DayOfWeek.Saturday && gunSayici.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    kullanilabilirGunler.Add(gunSayici);
+                }
+                gunSayici = gunSayici.AddDays(1);
+            }
+
+            if (kullanilabilirGunler.Count == 0)
+            {
+                MessageBox.Show("Başlangıç ve bitiş tarihleri arasında çalışma günü yok!",
+                                "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Her gün için dersleri tutacak yapı
+            var gunlukPlan = new Dictionary<DateTime, List<(DateTime saat, Ders ders, int kapasite, List<(int index, string kod, int kapasite)> siniflar)>>();
+
+            foreach (var gun in kullanilabilirGunler)
+            {
+                gunlukPlan[gun] = new List<(DateTime, Ders, int, List<(int, string, int)>)>();
+            }
+
+            // Dersleri round-robin şekilde günlere dağıt
             for (int i = 0; i < DersListesi.Instance.TumDersler.Count; i++)
             {
                 var ders = DersListesi.Instance.TumDersler[i];
 
-                // Hafta sonu kontrolü
-                while (tarih.DayOfWeek == DayOfWeek.Saturday || tarih.DayOfWeek == DayOfWeek.Sunday)
-                    tarih = tarih.AddDays(1);
+                // Bu dersin hangi güne gideceğini hesapla (round-robin)
+                int gunIndex = i % kullanilabilirGunler.Count;
+                DateTime hedefTarih = kullanilabilirGunler[gunIndex];
 
                 // Gerekli öğrenci kapasitesini hesapla
                 int gerekliKapasite = OgrenciListesi.Instance.TumOgrenciler
@@ -180,79 +208,75 @@ namespace HelperClasses
                     continue;
                 }
 
-                // Tarih ve saat kombinasyonunu oluştur
-                DateTime tarihSaat = tarih.Date.Add(saat.TimeOfDay);
+                // Bu gün için kaçıncı sınav bu?
+                int gunlukSinavSayisi = gunlukPlan[hedefTarih].Count;
+                DateTime saat = baslangicSaati.AddMinutes(gunlukSinavSayisi * sinavArasiBosluk);
 
-                // Bu tarih-saat için uygun sınıfları bul
-                var gerekliSiniflar = CokluSinifBul(gerekliKapasite, tarihSaat);
-
-                // Eğer bu saatte uygun sınıf bulunamadıysa
-                int denemeSayisi = 0;
-                while (gerekliSiniflar == null && denemeSayisi < 1000)
+                // Saat kontrolü
+                if (saat.Hour >= bitSaat || (saat.Hour == bitSaat - 1 && saat.AddMinutes(sinavSureDk).Hour >= bitSaat))
                 {
-                    denemeSayisi++;
-
-                    // Önce saati arttır
-                    saat = saat.AddMinutes(sinavArasiBosluk);
-
-                    // Saat bitiş saatini aştı mı?
-                    if (saat.Hour >= bitSaat || (saat.Hour == bitSaat - 1 && saat.AddMinutes(sinavSureDk).Hour >= bitSaat))
-                    {
-                        // Bir sonraki güne geç ve saati sıfırla
-                        tarih = SonrakiCalismaGunu(tarih);
-                        saat = DateTime.Today.AddHours(baslangicSaat).AddMinutes(baslangicdk);
-
-                        // Bitiş tarihini aştık mı?
-                        if (tarih > bitisTarih)
-                        {
-                            MessageBox.Show($"Yeterli sınıf/gün yok!\n\n" +
-                                            $"Ders: {ders.DersAdi}\n" +
-                                            $"Gereken Kapasite: {gerekliKapasite}\n" +
-                                            $"Toplam Derslik Kapasitesi: {Derslikler.Instance.TumDerslikler.Sum(d => d.DerslikKapasitesi)}\n\n" +
-                                            $"Lütfen bitiş tarihini uzatın veya daha fazla/büyük derslik ekleyin.",
-                                            "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
-                    }
-
-                    tarihSaat = tarih.Date.Add(saat.TimeOfDay);
-                    gerekliSiniflar = CokluSinifBul(gerekliKapasite, tarihSaat);
-                }
-
-                if (gerekliSiniflar == null)
-                {
-                    MessageBox.Show($"Ders yerleştirilemedi: {ders.DersAdi}\nMaksimum deneme sayısı aşıldı.",
+                    MessageBox.Show($"Ders saate sığmıyor!\n\n" +
+                                    $"Ders: {ders.DersAdi} (İndeks: {i})\n" +
+                                    $"Tarih: {hedefTarih.ToShortDateString()}\n" +
+                                    $"Bu gündeki sınav sayısı: {gunlukSinavSayisi + 1}\n" +
+                                    $"Hesaplanan saat: {saat.ToString("HH:mm")}\n" +
+                                    $"Bitiş saati: {bitSaat}:00\n\n" +
+                                    $"Çözüm önerileri:\n" +
+                                    $"- Bitiş tarihini uzatın (daha fazla gün)\n" +
+                                    $"- Sınav süresini kısaltın\n" +
+                                    $"- Çalışma saatlerini uzatın (bitiş saatini ilerletin)\n" +
+                                    $"- Mola süresini azaltın",
                                     "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                // Bulunan sınıfları kullan ve Excel'e ekle
+                // Tarih ve saat kombinasyonunu oluştur
+                DateTime tarihSaat = hedefTarih.Date.Add(saat.TimeOfDay);
+
+                // Bu tarih-saat için uygun sınıfları bul
+                var gerekliSiniflar = CokluSinifBul(gerekliKapasite, tarihSaat);
+
+                if (gerekliSiniflar == null)
+                {
+                    MessageBox.Show($"Yeterli sınıf bulunamadı!\n\n" +
+                                    $"Ders: {ders.DersAdi} (İndeks: {i})\n" +
+                                    $"Tarih: {hedefTarih.ToShortDateString()}\n" +
+                                    $"Saat: {saat.ToString("HH:mm")}\n" +
+                                    $"Gereken Kapasite: {gerekliKapasite}\n" +
+                                    $"Toplam Derslik Kapasitesi: {Derslikler.Instance.TumDerslikler.Sum(d => d.DerslikKapasitesi)}\n\n" +
+                                    $"Lütfen daha fazla/büyük derslik ekleyin.",
+                                    "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Plana ekle
+                gunlukPlan[hedefTarih].Add((saat, ders, gerekliKapasite, gerekliSiniflar));
+
+                // Sınıfları bu tarih-saatte kullanıldı olarak işaretle
                 foreach (var sinif in gerekliSiniflar)
                 {
-                    // Sınıfı bu tarih-saatte kullanıldı olarak işaretle
                     if (!sinifSaatler.ContainsKey(sinif.index))
                         sinifSaatler[sinif.index] = new List<DateTime>();
 
                     sinifSaatler[sinif.index].Add(tarihSaat);
-
-                    // Derslik bilgisini hazırla
-                    string derslikBilgisi = gerekliSiniflar.Count > 1
-                        ? $"{sinif.kod} ({sinif.kapasite} kişi)"
-                        : sinif.kod;
-
-                    // Excel'e ekle
-                    ExcelSatirEkle(tarih, saat, ders.DersAdi, ders.DersOgretmeni, derslikBilgisi);
                 }
+            }
 
-                // Bir sonraki sınav için saati arttır
-                saat = saat.AddMinutes(sinavArasiBosluk);
-
-                // Saat bitiş saatini aştı mı?
-                if (saat.Hour >= bitSaat || (saat.Hour == bitSaat - 1 && saat.AddMinutes(sinavSureDk).Hour >= bitSaat))
+            // Plana göre Excel'e yaz
+            foreach (var gun in gunlukPlan.OrderBy(x => x.Key))
+            {
+                foreach (var sinav in gun.Value)
                 {
-                    // Bir sonraki güne geç ve saati sıfırla
-                    tarih = SonrakiCalismaGunu(tarih);
-                    saat = DateTime.Today.AddHours(baslangicSaat).AddMinutes(baslangicdk);
+                    foreach (var sinif in sinav.siniflar)
+                    {
+                        // Derslik bilgisini hazırla
+                        string derslikBilgisi = sinav.siniflar.Count > 1
+                            ? $"{sinif.kod} ({sinif.kapasite} kişi)"
+                            : sinif.kod;
+
+                        // Excel'e ekle
+                        ExcelSatirEkle(gun.Key, sinav.saat, sinav.ders.DersAdi, sinav.ders.DersOgretmeni, derslikBilgisi);
+                    }
                 }
             }
         }
