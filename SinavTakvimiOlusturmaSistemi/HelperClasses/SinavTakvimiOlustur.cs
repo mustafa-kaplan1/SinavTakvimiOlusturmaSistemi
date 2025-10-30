@@ -106,7 +106,6 @@ namespace HelperClasses
                 if (siniflar[i] >= tarih)
                     continue;
 
-                MessageBox.Show(derslik.DerslikKapasitesi.ToString());
 
                 if (derslik.DerslikKapasitesi >= gerekliKapasite && derslik.DerslikKapasitesi < enKucukKapasite)
                 {
@@ -121,6 +120,32 @@ namespace HelperClasses
             return uygunIndex;
         }
 
+        private int enKapasiteliSinif(int gerekliKapasite, DateTime tarih)
+        {
+            int uygunIndex = -1;
+            int enBuyukKapasite = int.MinValue;
+
+            for (int i = 0; i < Derslikler.Instance.TumDerslikler.Count; i++)
+            {
+                var derslik = Derslikler.Instance.TumDerslikler[i];
+
+                // Zaten o tarihte dolu olan siniflari atla
+                if (siniflar[i] >= tarih)
+                    continue;
+
+                // Derslik kapasitesi gerekli kapasiteyi karsiliyor mu ve en buyuk kapasiteden buyuk mu
+                if (derslik.DerslikKapasitesi > enBuyukKapasite)
+                {
+                    enBuyukKapasite = derslik.DerslikKapasitesi;
+                    uygunIndex = i;
+                }
+            }
+            MessageBox.Show("Gerekli Kapasite: " + gerekliKapasite.ToString());
+            MessageBox.Show("En buyuk Kapasite: " + enBuyukKapasite.ToString());
+            return uygunIndex;
+        }
+
+
         private void DersListesiOku()
         {
             DateTime tarih = baslaTarih;
@@ -128,8 +153,9 @@ namespace HelperClasses
             string derslikKodu = "";
             int sinavArasiBosluk = sinavSureDk + molaSureDk;
             int gerekliKapasite;
+            int sinifIndex;
 
-            
+
 
             for (int i = 0; i < DersListesi.Instance.TumDersler.Count; i++)
             {
@@ -149,7 +175,15 @@ namespace HelperClasses
                 }
                 gerekliKapasite = OgrenciListesi.Instance.TumOgrenciler
                                   .Count(ogr => ogr.OgrenciDersler.Contains(ders.DersKodu));
-                int sinifIndex = idealSinif(gerekliKapasite, tarih);
+
+                while(gerekliKapasite < Derslikler.Instance.TumDerslikler[enKapasiteliSinif(gerekliKapasite, tarih)].DerslikKapasitesi)
+                {
+                    sinifIndex = enKapasiteliSinif(gerekliKapasite, tarih);
+                    derslikKodu = Derslikler.Instance.TumDerslikler[sinifIndex].DerslikKodu;
+                    siniflar[sinifIndex] = tarih;
+                    gerekliKapasite -= Derslikler.Instance.TumDerslikler[enKapasiteliSinif(gerekliKapasite, tarih)].DerslikKapasitesi;
+                }
+                sinifIndex = idealSinif(gerekliKapasite, tarih);
                 derslikKodu = Derslikler.Instance.TumDerslikler[sinifIndex].DerslikKodu;
                 siniflar[sinifIndex] = tarih;
 
