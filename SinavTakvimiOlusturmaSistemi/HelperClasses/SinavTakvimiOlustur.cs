@@ -1,6 +1,8 @@
 ﻿using ClosedXML.Excel;
 using SinavTakvimiOlusturmaSistemi;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace HelperClasses
@@ -9,7 +11,7 @@ namespace HelperClasses
     {
         private SinavProgramOlustur? form;
         private int sinifSayi;
-        private DateTime[] siniflar;
+        private Dictionary<int, List<DateTime>> sinifSaatler; // Her sınıf için kullanılan saat listesi
         private DateTime baslaTarih;
         private DateTime bitisTarih;
         private int baslangicSaat = 10;
@@ -29,15 +31,16 @@ namespace HelperClasses
                 return;
 
             sinifSayi = Derslikler.Instance.TumDerslikler.Count;
-            siniflar = new DateTime[sinifSayi];
+            sinifSaatler = new Dictionary<int, List<DateTime>>();
             baslaTarih = form.dateTimePicker1.Value;
             bitisTarih = form.dateTimePicker2.Value;
             sinavSureDk = int.Parse(form.textBox1.Text);
             molaSureDk = int.Parse(form.textBox2.Text);
 
+            // Her sınıf için boş saat listesi oluştur
             for (int i = 0; i < sinifSayi; i++)
             {
-                siniflar[i] = baslaTarih.AddDays(-1);
+                sinifSaatler[i] = new List<DateTime>();
             }
 
             ExcelOlustur();
@@ -45,11 +48,12 @@ namespace HelperClasses
             ExcelTarihSirala();
             ExcelHucreBirlestir();
             ExcelKaydet(@"C:\yazlab\vize_programi.xlsx");
+
+            MessageBox.Show("Sınav programı başarıyla oluşturuldu!", "Başarılı", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private bool inputKontrol()
         {
-            // textBox1 int mi kontrol et
             if (!int.TryParse(form.textBox1.Text, out _))
             {
                 MessageBox.Show("Sınav süresi sayi icermelidir!", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -57,7 +61,6 @@ namespace HelperClasses
                 return false;
             }
 
-            // textBox2 int mi kontrol et
             if (!int.TryParse(form.textBox2.Text, out _))
             {
                 MessageBox.Show("Bekleme süresi sayi icermelidir!", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -65,7 +68,6 @@ namespace HelperClasses
                 return false;
             }
 
-            // comboBox1 seçim yapılmış mı
             if (string.IsNullOrEmpty(form.comboBox1.Text))
             {
                 MessageBox.Show("Ders türü seçilmedi!", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -73,7 +75,6 @@ namespace HelperClasses
                 return false;
             }
 
-            // checkedListBox1 en az bir seçim yapılmış mı
             if (form.checkedListBox1.CheckedItems.Count == 0)
             {
                 MessageBox.Show("En az bir Ders seçimi yapmalisiniz!", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -89,107 +90,171 @@ namespace HelperClasses
                 return false;
             }
 
-            // Tüm kontroller geçtiyse
             return true;
         }
 
-        private int idealSinif(int gerekliKapasite, DateTime tarih) // dersi alan öğrenci saysı için yeterli en düşük kapasiteli sınıf indeksini verir
+        private DateTime SonrakiCalismaGunu(DateTime tarih)
         {
-            int uygunIndex = -1;
-            int enKucukKapasite = int.MaxValue;
+            tarih = tarih.AddDays(1);
+            while (tarih.DayOfWeek == DayOfWeek.Saturday || tarih.DayOfWeek == DayOfWeek.Sunday)
+            {
+                tarih = tarih.AddDays(1);
+            }
+            return tarih;
+        }
+
+        // Bir sınıfın belirli tarih ve saatte müsait olup olmadığını kontrol eder
+        private bool SinifMusaitMi(int sinifIndex, DateTime tarihSaat)
+        {
+            if (!sinifSaatler.ContainsKey(sinifIndex))
+                return true;
+
+            // Bu sınıfın bu tarih-saatte kullanılıp kullanılmadığını kontrol et
+            return !sinifSaatler[sinifIndex].Any(kullanilan =>
+                kullanilan.Date == tarihSaat.Date &&
+                kullanilan.TimeOfDay == tarihSaat.TimeOfDay);
+        }
+
+        // Bir ders için gereken sınıfları kapasiteye göre büyükten küçüğe bul
+        private List<(int index, string kod, int kapasite)> CokluSinifBul(int toplamKapasite, DateTime tarihSaat)
+        {
+            var secilenSiniflar = new List<(int index, string kod, int kapasite)>();
+            int kalanKapasite = toplamKapasite;
+
+            // Sınıfları kapasiteye göre büyükten küçüğe sırala
+            var musaitSiniflar = new List<(int index, int kapasite, string kod)>();
 
             for (int i = 0; i < Derslikler.Instance.TumDerslikler.Count; i++)
             {
-                var derslik = Derslikler.Instance.TumDerslikler[i];
-
-                // Zaten dolu siniflari atla
-                if (siniflar[i] >= tarih)
+                // Bu sınıf bu tarih-saatte müsait mi?
+                if (!SinifMusaitMi(i, tarihSaat))
                     continue;
 
-
-                if (derslik.DerslikKapasitesi >= gerekliKapasite && derslik.DerslikKapasitesi < enKucukKapasite)
-                {
-                    enKucukKapasite = derslik.DerslikKapasitesi;
-                    uygunIndex = i;
-                }
+                var derslik = Derslikler.Instance.TumDerslikler[i];
+                musaitSiniflar.Add((i, derslik.DerslikKapasitesi, derslik.DerslikKodu));
             }
-            MessageBox.Show("Gerekli Kapasite: " + gerekliKapasite.ToString());
-            MessageBox.Show("En Kucuk Kapasite: " + enKucukKapasite.ToString());
 
+            // Büyükten küçüğe sırala
+            musaitSiniflar = musaitSiniflar.OrderByDescending(x => x.kapasite).ToList();
 
-            return uygunIndex;
-        }
-
-        private int enKapasiteliSinif(int gerekliKapasite, DateTime tarih)
-        {
-            int uygunIndex = -1;
-            int enBuyukKapasite = int.MinValue;
-
-            for (int i = 0; i < Derslikler.Instance.TumDerslikler.Count; i++)
+            // Gerekli kapasiteyi karşılayana kadar sınıf ekle
+            foreach (var sinif in musaitSiniflar)
             {
-                var derslik = Derslikler.Instance.TumDerslikler[i];
+                if (kalanKapasite <= 0)
+                    break;
 
-                // Zaten o tarihte dolu olan siniflari atla
-                if (siniflar[i] >= tarih)
-                    continue;
-
-                // Derslik kapasitesi gerekli kapasiteyi karsiliyor mu ve en buyuk kapasiteden buyuk mu
-                if (derslik.DerslikKapasitesi > enBuyukKapasite)
-                {
-                    enBuyukKapasite = derslik.DerslikKapasitesi;
-                    uygunIndex = i;
-                }
+                int kullanilacakKapasite = Math.Min(sinif.kapasite, kalanKapasite);
+                secilenSiniflar.Add((sinif.index, sinif.kod, kullanilacakKapasite));
+                kalanKapasite -= kullanilacakKapasite;
             }
-            MessageBox.Show("Gerekli Kapasite: " + gerekliKapasite.ToString());
-            MessageBox.Show("En buyuk Kapasite: " + enBuyukKapasite.ToString());
-            return uygunIndex;
-        }
 
+            // Eğer tüm kapasiteyi karşılayamadıysak null döndür
+            if (kalanKapasite > 0)
+                return null;
+
+            return secilenSiniflar;
+        }
 
         private void DersListesiOku()
         {
             DateTime tarih = baslaTarih;
             DateTime saat = DateTime.Today.AddHours(baslangicSaat).AddMinutes(baslangicdk);
-            string derslikKodu = "";
             int sinavArasiBosluk = sinavSureDk + molaSureDk;
-            int gerekliKapasite;
-            int sinifIndex;
-
-
 
             for (int i = 0; i < DersListesi.Instance.TumDersler.Count; i++)
             {
                 var ders = DersListesi.Instance.TumDersler[i];
+
+                // Hafta sonu kontrolü
                 while (tarih.DayOfWeek == DayOfWeek.Saturday || tarih.DayOfWeek == DayOfWeek.Sunday)
                     tarih = tarih.AddDays(1);
-                if (tarih > bitisTarih) 
-                { 
-                    tarih = baslaTarih;
+
+                // Gerekli öğrenci kapasitesini hesapla
+                int gerekliKapasite = OgrenciListesi.Instance.TumOgrenciler
+                                      .Count(ogr => ogr.OgrenciDersler.Contains(ders.DersKodu));
+
+                if (gerekliKapasite == 0)
+                {
+                    MessageBox.Show($"Uyarı: '{ders.DersAdi}' dersini alan öğrenci yok!",
+                                    "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    continue;
+                }
+
+                // Tarih ve saat kombinasyonunu oluştur
+                DateTime tarihSaat = tarih.Date.Add(saat.TimeOfDay);
+
+                // Bu tarih-saat için uygun sınıfları bul
+                var gerekliSiniflar = CokluSinifBul(gerekliKapasite, tarihSaat);
+
+                // Eğer bu saatte uygun sınıf bulunamadıysa
+                int denemeSayisi = 0;
+                while (gerekliSiniflar == null && denemeSayisi < 1000)
+                {
+                    denemeSayisi++;
+
+                    // Önce saati arttır
                     saat = saat.AddMinutes(sinavArasiBosluk);
-                    while (tarih.DayOfWeek == DayOfWeek.Saturday || tarih.DayOfWeek == DayOfWeek.Sunday)
-                        tarih = tarih.AddDays(1);
+
+                    // Saat bitiş saatini aştı mı?
+                    if (saat.Hour >= bitSaat || (saat.Hour == bitSaat - 1 && saat.AddMinutes(sinavSureDk).Hour >= bitSaat))
+                    {
+                        // Bir sonraki güne geç ve saati sıfırla
+                        tarih = SonrakiCalismaGunu(tarih);
+                        saat = DateTime.Today.AddHours(baslangicSaat).AddMinutes(baslangicdk);
+
+                        // Bitiş tarihini aştık mı?
+                        if (tarih > bitisTarih)
+                        {
+                            MessageBox.Show($"Yeterli sınıf/gün yok!\n\n" +
+                                            $"Ders: {ders.DersAdi}\n" +
+                                            $"Gereken Kapasite: {gerekliKapasite}\n" +
+                                            $"Toplam Derslik Kapasitesi: {Derslikler.Instance.TumDerslikler.Sum(d => d.DerslikKapasitesi)}\n\n" +
+                                            $"Lütfen bitiş tarihini uzatın veya daha fazla/büyük derslik ekleyin.",
+                                            "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+
+                    tarihSaat = tarih.Date.Add(saat.TimeOfDay);
+                    gerekliSiniflar = CokluSinifBul(gerekliKapasite, tarihSaat);
                 }
-                if (saat.AddMinutes(sinavArasiBosluk).Hour > bitSaat)
+
+                if (gerekliSiniflar == null)
                 {
-                    // hata
+                    MessageBox.Show($"Ders yerleştirilemedi: {ders.DersAdi}\nMaksimum deneme sayısı aşıldı.",
+                                    "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
-                gerekliKapasite = OgrenciListesi.Instance.TumOgrenciler
-                                  .Count(ogr => ogr.OgrenciDersler.Contains(ders.DersKodu));
 
-                while(gerekliKapasite < Derslikler.Instance.TumDerslikler[enKapasiteliSinif(gerekliKapasite, tarih)].DerslikKapasitesi)
+                // Bulunan sınıfları kullan ve Excel'e ekle
+                foreach (var sinif in gerekliSiniflar)
                 {
-                    sinifIndex = enKapasiteliSinif(gerekliKapasite, tarih);
-                    derslikKodu = Derslikler.Instance.TumDerslikler[sinifIndex].DerslikKodu;
-                    siniflar[sinifIndex] = tarih;
-                    gerekliKapasite -= Derslikler.Instance.TumDerslikler[enKapasiteliSinif(gerekliKapasite, tarih)].DerslikKapasitesi;
+                    // Sınıfı bu tarih-saatte kullanıldı olarak işaretle
+                    if (!sinifSaatler.ContainsKey(sinif.index))
+                        sinifSaatler[sinif.index] = new List<DateTime>();
+
+                    sinifSaatler[sinif.index].Add(tarihSaat);
+
+                    // Derslik bilgisini hazırla
+                    string derslikBilgisi = gerekliSiniflar.Count > 1
+                        ? $"{sinif.kod} ({sinif.kapasite} kişi)"
+                        : sinif.kod;
+
+                    // Excel'e ekle
+                    ExcelSatirEkle(tarih, saat, ders.DersAdi, ders.DersOgretmeni, derslikBilgisi);
                 }
-                sinifIndex = idealSinif(gerekliKapasite, tarih);
-                derslikKodu = Derslikler.Instance.TumDerslikler[sinifIndex].DerslikKodu;
-                siniflar[sinifIndex] = tarih;
 
+                // Bir sonraki sınav için saati arttır
+                saat = saat.AddMinutes(sinavArasiBosluk);
 
-                ExcelSatirEkle(tarih, saat, ders.DersAdi, ders.DersOgretmeni, derslikKodu);
-            } 
+                // Saat bitiş saatini aştı mı?
+                if (saat.Hour >= bitSaat || (saat.Hour == bitSaat - 1 && saat.AddMinutes(sinavSureDk).Hour >= bitSaat))
+                {
+                    // Bir sonraki güne geç ve saati sıfırla
+                    tarih = SonrakiCalismaGunu(tarih);
+                    saat = DateTime.Today.AddHours(baslangicSaat).AddMinutes(baslangicdk);
+                }
+            }
         }
 
         private void ExcelOlustur()
@@ -234,34 +299,32 @@ namespace HelperClasses
             _currentRow++;
         }
 
-
         private void ExcelTarihSirala()
         {
-            // Veri araligini bul: 2. satir header, veri 3.satirdan basliyor
             var lastRow = _sheet.LastRowUsed().RowNumber();
-            var range = _sheet.Range($"A2:E{lastRow}");
-
-            range.Sort("A3", XLSortOrder.Ascending); // A sutununa gore artan siralama
+            if (lastRow > 2)
+            {
+                var range = _sheet.Range($"A3:E{lastRow}");
+                range.Sort(1); // 1. kolona göre sırala (Tarih)
+            }
         }
 
         private void ExcelHucreBirlestir()
         {
             var lastRow = _sheet.LastRowUsed().RowNumber();
 
-            int startRow = 3; // veri 3. satirdan basliyor
+            int startRow = 3;
             while (startRow <= lastRow)
             {
                 string currentDate = _sheet.Cell(startRow, 1).GetValue<string>();
                 int endRow = startRow;
 
-                // ardısık aynı tarihleri bul
                 while (endRow + 1 <= lastRow &&
                        _sheet.Cell(endRow + 1, 1).GetValue<string>() == currentDate)
                 {
                     endRow++;
                 }
 
-                // birden fazla satır varsa birleştir
                 if (endRow > startRow)
                 {
                     _sheet.Range(startRow, 1, endRow, 1).Merge();
